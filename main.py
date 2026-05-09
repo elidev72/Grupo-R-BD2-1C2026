@@ -1,3 +1,7 @@
+from config import conectar_db, desconectar_db
+from models import *
 
 if __name__ == "__main__":
-    pass
+    conectar_db()
+    
+    desconectar_db()
