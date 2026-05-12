@@ -6,3 +6,4 @@ icecream==2.2.0
 mongoengine==0.29.3
 Pygments==2.20.0
 pymongo==4.17.0
+python-dotenv==1.2.2
