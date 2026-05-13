@@ -5,6 +5,6 @@ from .cadena import Cadena
 class Sucursal(Document):
     nombre = StringField(required=True)
     cadena = ReferenceField(Cadena, required=True)
-    domicilio = EmbeddedDocumentField(Ubicacion)
+    sede = EmbeddedDocumentField(Ubicacion, required=True)
     
     meta = {'collection': 'sucursales'}

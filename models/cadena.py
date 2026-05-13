@@ -2,6 +2,6 @@ from mongoengine import Document, StringField
 
 class Cadena(Document):
     nombre = StringField(required=True, unique=True) # Marca comercial
-    cuit = StringField()
+    cuit = StringField(unique=True)
 
     meta = {'collection': 'cadenas'}
