@@ -3,6 +3,12 @@
 #sucursales. Todo esto debe ocurrir entre dos fechas pasadas como parámetros (fecha desde y
 #fecha hasta)
 
+# intentar acceder a la coleccion usando el objeto como Venta (importar dependencia)
+# Venta._get_collection().aggregate(codigo no sql)
+
+# recomendacion hagan la consulta primero en el mongodb compass o lo que usen para
+# abstraerse de problemas de codigo y una vez la tienen la intentan agregar al codigo
+
 def reporte_1(fecha_desde, fecha_hasta):
     pass # nota borrar el pass en la funciones y colocar la consulta
 

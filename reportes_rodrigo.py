@@ -4,6 +4,12 @@
 # completa (todas las sucursales) y por otro lado la cobranza agrupada por sucursales. Todo esto
 # debe ocurrir entre dos fechas pasadas como parámetros (fecha desde y fecha hasta).
 
+# intentar acceder a la coleccion usando el objeto como Venta (importar dependencia)
+# Venta._get_collection().aggregate(codigo no sql)
+
+# recomendacion hagan la consulta primero en el mongodb compass o lo que usen para
+# abstraerse de problemas de codigo y una vez la tienen la intentan agregar al codigo
+
 def reporte_3(fecha_desde, fecha_hasta):
     pass # borrar el pass y colocar la consulta
 
