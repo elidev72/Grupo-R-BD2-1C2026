@@ -10,14 +10,14 @@ if __name__ == "__main__":
     salir = False
     while not salir:
         print("--- Menu opciones reportes ---")
-        print("1- Reporte 1")
-        print("2- Reporte 2")
-        print("3- Reporte 3")
-        print("4- Reporte 4")
-        print("5- Reporte 5")
-        print("6- Reporte 6")
-        print("7- Reporte 7")
-        print("8- Reporte 8")
+        print("1- Reporte 1: CANTIDAD DE VENTAS POR CADENA Y SUCURSALES (ENTRE DOS FECHAS)")
+        print("2- Reporte 2: CANTIDADES DE VENTAS AGRUPADAS POR OBRAS SOCIALES (ENTRE DOS FECHAS)")
+        print("3- Reporte 3: COBRANZA TOTAL Y POR SUCURSALES (ENTRE DOS FECHAS)")
+        print("4- Reporte 4: CANTIDADES DE VENTAS POR TIPO DE PRODUCTO (ENTRE DOS FECHAS)")
+        print("5- Reporte 5: RANKING DE MONTO VENDIDO POR PRODUCTO Y SUCURSAL")
+        print("6- Reporte 6: RANKING DE CANTIDAD DE PRODUCTOS VENDIDOS POR PRODUCTO Y SUCURSAL")
+        print("7- Reporte 7: RANKING DE CLIENTES POR COMPRAS EN TODA LA CADENA")
+        print("8- Reporte 8: RANKING DE CLIENTES POR COMPRAS INTRA-SUCURSAL")
         print("9- Salir")
 
         opcion = int(input("Introduce una opcion: "))
@@ -35,9 +35,20 @@ if __name__ == "__main__":
         elif opcion == 6:
             reporte_6()
         elif opcion == 7:
-            reporte_7()
+            ranking = reporte_7()
+            print("\n" + "="*80)
+            print("REPORTE 7: RANKING DE CLIENTES POR COMPRAS EN TODA LA CADENA")
+            print("="*80)
+            print(json.dumps(ranking, cls=MongoEncoder, indent=2, ensure_ascii=False))
+            print(f"\nTotal de clientes activos: {len(ranking)}")
+
         elif opcion == 8:
-            reporte_8()
+            ranking = reporte_8()
+            print("\n" + "="*80)
+            print("REPORTE 8: RANKING DE CLIENTES POR COMPRAS INTRA-SUCURSAL")
+            print("="*80)
+            print(json.dumps(ranking, cls=MongoEncoder, indent=2, ensure_ascii=False))
+            print(f"\nTotal de combinaciones cliente-sucursal: {len(ranking)}")
         elif opcion == 9:
             salir = True
 
