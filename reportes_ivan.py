@@ -1,3 +1,4 @@
+from models.venta import Venta
 
 def reporte_1(fecha_desde, fecha_hasta):
     collection = Venta._get_collection()
@@ -10,7 +11,6 @@ def reporte_1(fecha_desde, fecha_hasta):
                     "$lte": fecha_hasta
                 }
             }
-            
         },
         {
             "$group": {
@@ -41,7 +41,6 @@ def reporte_1(fecha_desde, fecha_hasta):
         "total_general": list(collection.aggregate(pipeline_total)),
         "por_sucursal": list(collection.aggregate(pipeline_por_sucursal))
     }
-
 
 #1. Un reporte con dos resultados, por un lado el total de la cantidad de ventas de toda la
 #cadena completa (todas las sucursales) y por otro lado las cantidades de ventas agrupadas por

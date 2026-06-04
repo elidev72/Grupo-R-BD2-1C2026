@@ -1,134 +1,79 @@
-
 import json
 from datetime import datetime
 
 from config import conectar_db, desconectar_db
 from models import *
-
 from reportes_ivan import *
 from reportes_rodrigo import *
 from reportes_eze import *
 
-# IMPORTANTE: si lo usás en 7 y 8
-try:
-    from utils import MongoEncoder
-except:
-    MongoEncoder = None
-
-
 if __name__ == "__main__":
     conectar_db()
-    
+
     salir = False
     while not salir:
-        print("\n--- Menu opciones reportes ---")
+        print("--- Menu opciones reportes ---")
         print("1- Reporte 1: CANTIDAD DE VENTAS POR CADENA Y SUCURSALES (ENTRE DOS FECHAS)")
-        print("2- Reporte 2: OBRAS SOCIALES (ENTRE DOS FECHAS)")
-        print("3- Reporte 3: COBRANZA TOTAL Y POR SUCURSALES")
-        print("4- Reporte 4")
-        print("5- Reporte 5")
-        print("6- Reporte 6")
-        print("7- Reporte 7")
-        print("8- Reporte 8")
+        print("2- Reporte 2: CANTIDADES DE VENTAS AGRUPADAS POR OBRAS SOCIALES (ENTRE DOS FECHAS)")
+        print("3- Reporte 3: COBRANZA TOTAL Y POR SUCURSALES (ENTRE DOS FECHAS)")
+        print("4- Reporte 4: CANTIDADES DE VENTAS POR TIPO DE PRODUCTO (ENTRE DOS FECHAS)")
+        print("5- Reporte 5: RANKING DE MONTO VENDIDO POR PRODUCTO Y SUCURSAL")
+        print("6- Reporte 6: RANKING DE CANTIDAD DE PRODUCTOS VENDIDOS POR PRODUCTO Y SUCURSAL")
+        print("7- Reporte 7: RANKING DE CLIENTES POR COMPRAS EN TODA LA CADENA")
+        print("8- Reporte 8: RANKING DE CLIENTES POR COMPRAS INTRA-SUCURSAL")
         print("9- Salir")
 
         opcion = int(input("Introduce una opcion: "))
 
-        # -------------------------
-        # 📊 REPORTE 1
-        # -------------------------
         if opcion == 1:
-            print("\n--- REPORTE 1 ---")
+            print("\nIngrese fechas (formato YYYY-MM-DD)")
 
-            desde = input("Fecha desde (YYYY-MM-DD): ")
-            hasta = input("Fecha hasta (YYYY-MM-DD): ")
+            fecha_desde = input("Fecha desde: ")
+            fecha_hasta = input("Fecha hasta: ")
 
-            resultado = reporte_1(
-                datetime.fromisoformat(desde),
-                datetime.fromisoformat(hasta)
-            )
+            fecha_desde = datetime.strptime(fecha_desde, "%Y-%m-%d")
+            fecha_hasta = datetime.strptime(fecha_hasta, "%Y-%m-%d")
+
+            resultado = reporte_1(fecha_desde, fecha_hasta)
 
             print("\n" + "="*80)
-            print("RESULTADO REPORTE 1")
-            print("="*80)
-            print(json.dumps(resultado, indent=2, ensure_ascii=False))
+            print("REPORTE 1: VENTAS POR CADENA Y SUCURSAL")
             print("="*80)
 
-        # -------------------------
-        # 📊 REPORTE 2
-        # -------------------------
+            print(json.dumps(resultado, indent=2, ensure_ascii=False, default=str))
+
         elif opcion == 2:
-            try:
-                desde = input("Fecha desde (YYYY-MM-DD): ")
-                hasta = input("Fecha hasta (YYYY-MM-DD): ")
+            reporte_2()
 
-                resultado = reporte_2(
-                    datetime.fromisoformat(desde),
-                    datetime.fromisoformat(hasta)
-                )
-
-                print(json.dumps(resultado, indent=2, ensure_ascii=False))
-            except:
-                print("❌ Reporte 2 no disponible o error")
-
-        # -------------------------
         elif opcion == 3:
-            try:
-                reporte_3()
-            except:
-                print("❌ Reporte 3 no disponible")
+            reporte_3()
 
         elif opcion == 4:
-            try:
-                reporte_4()
-            except:
-                print("❌ Reporte 4 no disponible")
+            reporte_4()
 
         elif opcion == 5:
-            try:
-                reporte_5()
-            except:
-                print("❌ Reporte 5 no disponible")
+            reporte_5()
 
-        # -------------------------
         elif opcion == 6:
-            try:
-                reporte_6()
-            except:
-                print("❌ Reporte 6 no disponible")
+            reporte_6()
 
-        # -------------------------
         elif opcion == 7:
-            try:
-                ranking = reporte_7()
+            ranking = reporte_7()
+            print("\n" + "="*80)
+            print("REPORTE 7: RANKING DE CLIENTES POR COMPRAS EN TODA LA CADENA")
+            print("="*80)
+            print(json.dumps(ranking, indent=2, ensure_ascii=False, default=str))
+            print(f"\nTotal de clientes activos: {len(ranking)}")
 
-                if MongoEncoder:
-                    print(json.dumps(ranking, cls=MongoEncoder, indent=2, ensure_ascii=False))
-                else:
-                    print(json.dumps(ranking, indent=2, ensure_ascii=False))
-
-                print(f"\nTotal: {len(ranking)}")
-            except:
-                print("❌ Reporte 7 no disponible")
-
-        # -------------------------
         elif opcion == 8:
-            try:
-                ranking = reporte_8()
+            ranking = reporte_8()
+            print("\n" + "="*80)
+            print("REPORTE 8: RANKING DE CLIENTES POR COMPRAS INTRA-SUCURSAL")
+            print("="*80)
+            print(json.dumps(ranking, indent=2, ensure_ascii=False, default=str))
+            print(f"\nTotal de combinaciones cliente-sucursal: {len(ranking)}")
 
-                if MongoEncoder:
-                    print(json.dumps(ranking, cls=MongoEncoder, indent=2, ensure_ascii=False))
-                else:
-                    print(json.dumps(ranking, indent=2, ensure_ascii=False))
-
-                print(f"\nTotal: {len(ranking)}")
-            except:
-                print("❌ Reporte 8 no disponible")
-
-        # -------------------------
         elif opcion == 9:
             salir = True
 
     desconectar_db()
-    
-    
