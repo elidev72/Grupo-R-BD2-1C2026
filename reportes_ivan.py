@@ -1,3 +1,48 @@
+
+def reporte_1(fecha_desde, fecha_hasta):
+    collection = Venta._get_collection()
+
+    pipeline_total = [
+        {
+            "$match": {
+                "fecha": {
+                    "$gte": fecha_desde,
+                    "$lte": fecha_hasta
+                }
+            }
+            
+        },
+        {
+            "$group": {
+                "_id": None,
+                "totalVentas": {"$sum": 1}
+            }
+        }
+    ]
+
+    pipeline_por_sucursal = [
+        {
+            "$match": {
+                "fecha": {
+                    "$gte": fecha_desde,
+                    "$lte": fecha_hasta
+                }
+            }
+        },
+        {
+            "$group": {
+                "_id": "$sucursal",
+                "totalVentas": {"$sum": 1}
+            }
+        }
+    ]
+
+    return {
+        "total_general": list(collection.aggregate(pipeline_total)),
+        "por_sucursal": list(collection.aggregate(pipeline_por_sucursal))
+    }
+
+
 #1. Un reporte con dos resultados, por un lado el total de la cantidad de ventas de toda la
 #cadena completa (todas las sucursales) y por otro lado las cantidades de ventas agrupadas por
 #sucursales. Todo esto debe ocurrir entre dos fechas pasadas como parámetros (fecha desde y
@@ -8,9 +53,6 @@
 
 # recomendacion hagan la consulta primero en el mongodb compass o lo que usen para
 # abstraerse de problemas de codigo y una vez la tienen la intentan agregar al codigo
-
-def reporte_1(fecha_desde, fecha_hasta):
-    pass # nota borrar el pass en la funciones y colocar la consulta
 
 #
 #2. Un reporte con las cantidades de ventas agrupadas por obras sociales y además considerar
