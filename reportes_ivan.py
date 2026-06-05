@@ -12,12 +12,9 @@ from models.venta import Venta
 # recomendacion hagan la consulta primero en el mongodb compass o lo que usen para
 # abstraerse de problemas de codigo y una vez la tienen la intentan agregar al codigo
 
-from models.venta import Venta
-
 def reporte_1(fecha_desde, fecha_hasta):
     collection = Venta._get_collection()
 
-    # total general
     pipeline_total = [
         {
             "$match": {
@@ -32,7 +29,6 @@ def reporte_1(fecha_desde, fecha_hasta):
         }
     ]
 
-    # por sucursal (usando sede)
     pipeline_por_sucursal = [
         {
             "$match": {
@@ -42,17 +38,48 @@ def reporte_1(fecha_desde, fecha_hasta):
                 }
             }
         },
+
+        # TRAER SUCURSAL
+        {
+            "$lookup": {
+                "from": "sucursales",
+                "localField": "sucursal",
+                "foreignField": "_id",
+                "as": "sucursal_info"
+            }
+        },
+        {
+            "$unwind": "$sucursal_info"
+        },
+
+        # TRAER CADENA (FALTABA ESTO)
+        {
+            "$lookup": {
+                "from": "cadenas",
+                "localField": "cadena",
+                "foreignField": "_id",
+                "as": "cadena_info"
+            }
+        },
+        {
+            "$unwind": "$cadena_info"
+        },
+
+        # AGRUPAR YA CON NOMBRES
         {
             "$group": {
                 "_id": {
-                    "provincia": "$sede.provincia",
-                    "localidad": "$sede.localidad"
+                    "cadena": "$cadena_info.nombre",
+                    "sucursal": "$sucursal_info.nombre"
                 },
                 "totalVentas": {"$sum": 1}
             }
         },
+
         {
-            "$sort": {"totalVentas": -1}
+            "$sort": {
+                "totalVentas": -1
+            }
         }
     ]
 
@@ -139,23 +166,51 @@ def reporte_6():
     collection = Venta._get_collection()
 
     pipeline = [
+        # separar items
         {
             "$unwind": "$items"
         },
+
+        # traer producto
+        {
+            "$lookup": {
+                "from": "productos",
+                "localField": "items.producto_id",
+                "foreignField": "_id",
+                "as": "producto_info"
+            }
+        },
+        {
+            "$unwind": "$producto_info"
+        },
+
+        # traer sucursal
+        {
+            "$lookup": {
+                "from": "sucursales",
+                "localField": "sucursal",
+                "foreignField": "_id",
+                "as": "sucursal_info"
+            }
+        },
+        {
+            "$unwind": "$sucursal_info"
+        },
+
+        # agrupar
         {
             "$group": {
                 "_id": {
-                    "producto": "$items.producto_id",
-                    "sucursal": {
-                        "provincia": "$sede.provincia",
-                        "localidad": "$sede.localidad"
-                    }
+                    "producto": "$producto_info.descripcion",
+                    "sucursal": "$sucursal_info.nombre"
                 },
                 "totalVendidos": {
                     "$sum": "$items.cantidad"
                 }
             }
         },
+
+        # ordenar ranking
         {
             "$sort": {
                 "totalVendidos": -1
@@ -164,4 +219,7 @@ def reporte_6():
     ]
 
     return list(collection.aggregate(pipeline))
+
+
+
 

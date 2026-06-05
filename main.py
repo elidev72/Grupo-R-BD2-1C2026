@@ -83,6 +83,7 @@ if __name__ == "__main__":
             except Exception as e:
                 print("❌ Error en Reporte 3:", e)
 
+
         # -------------------- REPORTE 4 --------------------
         elif opcion == 4:
             try:
