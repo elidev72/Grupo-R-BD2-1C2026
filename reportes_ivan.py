@@ -1,46 +1,5 @@
+
 from models.venta import Venta
-
-def reporte_1(fecha_desde, fecha_hasta):
-    collection = Venta._get_collection()
-
-    pipeline_total = [
-        {
-            "$match": {
-                "fecha": {
-                    "$gte": fecha_desde,
-                    "$lte": fecha_hasta
-                }
-            }
-        },
-        {
-            "$group": {
-                "_id": None,
-                "totalVentas": {"$sum": 1}
-            }
-        }
-    ]
-
-    pipeline_por_sucursal = [
-        {
-            "$match": {
-                "fecha": {
-                    "$gte": fecha_desde,
-                    "$lte": fecha_hasta
-                }
-            }
-        },
-        {
-            "$group": {
-                "_id": "$sucursal",
-                "totalVentas": {"$sum": 1}
-            }
-        }
-    ]
-
-    return {
-        "total_general": list(collection.aggregate(pipeline_total)),
-        "por_sucursal": list(collection.aggregate(pipeline_por_sucursal))
-    }
 
 #1. Un reporte con dos resultados, por un lado el total de la cantidad de ventas de toda la
 #cadena completa (todas las sucursales) y por otro lado las cantidades de ventas agrupadas por
@@ -53,16 +12,60 @@ def reporte_1(fecha_desde, fecha_hasta):
 # recomendacion hagan la consulta primero en el mongodb compass o lo que usen para
 # abstraerse de problemas de codigo y una vez la tienen la intentan agregar al codigo
 
+from models.venta import Venta
 
+def reporte_1(fecha_desde, fecha_hasta):
+    collection = Venta._get_collection()
 
+    # total general
+    pipeline_total = [
+        {
+            "$match": {
+                "fecha": {
+                    "$gte": fecha_desde,
+                    "$lte": fecha_hasta
+                }
+            }
+        },
+        {
+            "$count": "totalVentas"
+        }
+    ]
+
+    # por sucursal (usando sede)
+    pipeline_por_sucursal = [
+        {
+            "$match": {
+                "fecha": {
+                    "$gte": fecha_desde,
+                    "$lte": fecha_hasta
+                }
+            }
+        },
+        {
+            "$group": {
+                "_id": {
+                    "provincia": "$sede.provincia",
+                    "localidad": "$sede.localidad"
+                },
+                "totalVentas": {"$sum": 1}
+            }
+        },
+        {
+            "$sort": {"totalVentas": -1}
+        }
+    ]
+
+    return {
+        "total_general": list(collection.aggregate(pipeline_total)),
+        "por_sucursal": list(collection.aggregate(pipeline_por_sucursal))
+    }
 
 
 #
 #2. Un reporte con las cantidades de ventas agrupadas por obras sociales y además considerar
 #los privados (sin obra social) como un grupo mas. Todo esto debe ocurrir entre dos fechas
 #pasadas como parámetros (fecha desde y fecha hasta)
-
-
 
 def reporte_2(fecha_desde, fecha_hasta):
     collection = Venta._get_collection()
@@ -129,12 +132,8 @@ def reporte_2(fecha_desde, fecha_hasta):
 
     return list(collection.aggregate(pipeline))
 
-
-
 #
 #6. Ranking de cantidad de productos vendidos, agrupado por producto y por sucursal.
-
-from models.venta import Venta
 
 def reporte_6():
     collection = Venta._get_collection()
@@ -147,7 +146,10 @@ def reporte_6():
             "$group": {
                 "_id": {
                     "producto": "$items.producto_id",
-                    "sucursal": "$sucursal"
+                    "sucursal": {
+                        "provincia": "$sede.provincia",
+                        "localidad": "$sede.localidad"
+                    }
                 },
                 "totalVendidos": {
                     "$sum": "$items.cantidad"
