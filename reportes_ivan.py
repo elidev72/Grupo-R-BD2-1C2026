@@ -134,5 +134,32 @@ def reporte_2(fecha_desde, fecha_hasta):
 #
 #6. Ranking de cantidad de productos vendidos, agrupado por producto y por sucursal.
 
+from models.venta import Venta
+
 def reporte_6():
-    pass
+    collection = Venta._get_collection()
+
+    pipeline = [
+        {
+            "$unwind": "$items"
+        },
+        {
+            "$group": {
+                "_id": {
+                    "producto": "$items.producto_id",
+                    "sucursal": "$sucursal"
+                },
+                "totalVendidos": {
+                    "$sum": "$items.cantidad"
+                }
+            }
+        },
+        {
+            "$sort": {
+                "totalVendidos": -1
+            }
+        }
+    ]
+
+    return list(collection.aggregate(pipeline))
+
