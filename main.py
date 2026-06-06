@@ -78,26 +78,24 @@ if __name__ == "__main__":
         # -------------------- REPORTE 3 --------------------
         elif opcion == 3:
            try:
-                fecha_inicio = datetime(2026, 1, 1)
-                fecha_fin = datetime(2026, 12, 31)
-                resultado = reporte_3(fecha_inicio, fecha_fin)
+                fecha_desde = leer_fecha("Fecha desde (YYYY-MM-DD): ")
+                fecha_hasta = leer_fecha("Fecha hasta (YYYY-MM-DD): ")
+                resultado = reporte_3(fecha_desde, fecha_hasta)
                 mostrar_reporte_3(resultado)
            except Exception as e:
                 print(f"Error al generar el reporte 3: {e}")
 
         elif opcion == 4:
             try:
-                fecha_inicio = datetime(2026, 1, 1)
-                fecha_fin = datetime(2026, 12, 31)
-                resultado = reporte_4(fecha_inicio, fecha_fin)
+                fecha_desde = leer_fecha("Fecha desde (YYYY-MM-DD): ")
+                fecha_hasta = leer_fecha("Fecha hasta (YYYY-MM-DD): ")
+                resultado = reporte_4(fecha_desde, fecha_hasta)
                 mostrar_reporte_4(resultado)
             except Exception as e:
                 print(f"Error al generar el reporte 4: {e}")
         elif opcion == 5:
             try:
-                fecha_inicio = datetime(2026, 1, 1)
-                fecha_fin = datetime(2026, 12, 31)
-                resultado = reporte_5(fecha_inicio, fecha_fin)
+                resultado = reporte_5()
                 mostrar_reporte_5(resultado)
             except Exception as e:
                 print(f"Error al generar el reporte 5: {e}")

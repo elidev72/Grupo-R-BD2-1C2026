@@ -338,17 +338,10 @@ def mostrar_reporte_4(resultado):
 
 #5. Ranking de monto vendido, agrupado por producto y por sucursal.
 
-def reporte_5(fecha_desde, fecha_hasta):
+def reporte_5():
 
     pipeline = [
-        {
-            "$match": {
-                "fecha": {
-                    "$gte": fecha_desde,
-                    "$lte": fecha_hasta
-                }
-            }
-        },
+
 
         {
             "$unwind": "$items"
