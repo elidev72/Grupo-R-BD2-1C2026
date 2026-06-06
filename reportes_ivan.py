@@ -1,3 +1,6 @@
+
+from models.venta import Venta
+
 #1. Un reporte con dos resultados, por un lado el total de la cantidad de ventas de toda la
 #cadena completa (todas las sucursales) y por otro lado las cantidades de ventas agrupadas por
 #sucursales. Todo esto debe ocurrir entre dos fechas pasadas como parámetros (fecha desde y
@@ -10,7 +13,81 @@
 # abstraerse de problemas de codigo y una vez la tienen la intentan agregar al codigo
 
 def reporte_1(fecha_desde, fecha_hasta):
-    pass # nota borrar el pass en la funciones y colocar la consulta
+    collection = Venta._get_collection()
+
+    pipeline_total = [
+        {
+            "$match": {
+                "fecha": {
+                    "$gte": fecha_desde,
+                    "$lte": fecha_hasta
+                }
+            }
+        },
+        {
+            "$count": "totalVentas"
+        }
+    ]
+
+    pipeline_por_sucursal = [
+        {
+            "$match": {
+                "fecha": {
+                    "$gte": fecha_desde,
+                    "$lte": fecha_hasta
+                }
+            }
+        },
+
+        # TRAER SUCURSAL
+        {
+            "$lookup": {
+                "from": "sucursales",
+                "localField": "sucursal",
+                "foreignField": "_id",
+                "as": "sucursal_info"
+            }
+        },
+        {
+            "$unwind": "$sucursal_info"
+        },
+
+        # TRAER CADENA (FALTABA ESTO)
+        {
+            "$lookup": {
+                "from": "cadenas",
+                "localField": "cadena",
+                "foreignField": "_id",
+                "as": "cadena_info"
+            }
+        },
+        {
+            "$unwind": "$cadena_info"
+        },
+
+        # AGRUPAR YA CON NOMBRES
+        {
+            "$group": {
+                "_id": {
+                    "cadena": "$cadena_info.nombre",
+                    "sucursal": "$sucursal_info.nombre"
+                },
+                "totalVentas": {"$sum": 1}
+            }
+        },
+
+        {
+            "$sort": {
+                "totalVentas": -1
+            }
+        }
+    ]
+
+    return {
+        "total_general": list(collection.aggregate(pipeline_total)),
+        "por_sucursal": list(collection.aggregate(pipeline_por_sucursal))
+    }
+
 
 #
 #2. Un reporte con las cantidades de ventas agrupadas por obras sociales y además considerar
@@ -18,10 +95,131 @@ def reporte_1(fecha_desde, fecha_hasta):
 #pasadas como parámetros (fecha desde y fecha hasta)
 
 def reporte_2(fecha_desde, fecha_hasta):
-    pass # nota borrar el pass en la funciones y colocar la consulta
+    collection = Venta._get_collection()
+
+    pipeline = [
+        # 1. filtro por fechas
+        {
+            "$match": {
+                "fecha": {
+                    "$gte": fecha_desde,
+                    "$lte": fecha_hasta
+                }
+            }
+        },
+
+        # 2. join con personas
+        {
+            "$lookup": {
+                "from": "personas",
+                "localField": "cliente",
+                "foreignField": "_id",
+                "as": "cliente_info"
+            }
+        },
+
+        # 3. unwind cliente
+        {
+            "$unwind": "$cliente_info"
+        },
+
+        # 4. join obra social
+        {
+            "$lookup": {
+                "from": "obra_social",  # ojo: puede variar el nombre
+                "localField": "cliente_info.afiliacion.obra_social",
+                "foreignField": "_id",
+                "as": "obra_social_info"
+            }
+        },
+
+        # 5. unwind obra social (para poder agrupar bien)
+        {
+            "$unwind": {
+                "path": "$obra_social_info",
+                "preserveNullAndEmptyArrays": True
+            }
+        },
+
+        # 6. group final
+        {
+            "$group": {
+                "_id": {
+                    "$ifNull": [
+                        "$obra_social_info.nombre",
+                        "Privado"
+                    ]
+                },
+                "cantidadVentas": {
+                    "$sum": 1
+                }
+            }
+        }
+    ]
+
+    return list(collection.aggregate(pipeline))
 
 #
 #6. Ranking de cantidad de productos vendidos, agrupado por producto y por sucursal.
 
 def reporte_6():
-    pass
+    collection = Venta._get_collection()
+
+    pipeline = [
+        # separar items
+        {
+            "$unwind": "$items"
+        },
+
+        # traer producto
+        {
+            "$lookup": {
+                "from": "productos",
+                "localField": "items.producto_id",
+                "foreignField": "_id",
+                "as": "producto_info"
+            }
+        },
+        {
+            "$unwind": "$producto_info"
+        },
+
+        # traer sucursal
+        {
+            "$lookup": {
+                "from": "sucursales",
+                "localField": "sucursal",
+                "foreignField": "_id",
+                "as": "sucursal_info"
+            }
+        },
+        {
+            "$unwind": "$sucursal_info"
+        },
+
+        # agrupar
+        {
+            "$group": {
+                "_id": {
+                    "producto": "$producto_info.descripcion",
+                    "sucursal": "$sucursal_info.nombre"
+                },
+                "totalVendidos": {
+                    "$sum": "$items.cantidad"
+                }
+            }
+        },
+
+        # ordenar ranking
+        {
+            "$sort": {
+                "totalVendidos": -1
+            }
+        }
+    ]
+
+    return list(collection.aggregate(pipeline))
+
+
+
+
