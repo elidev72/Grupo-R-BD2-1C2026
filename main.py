@@ -77,30 +77,30 @@ if __name__ == "__main__":
 
         # -------------------- REPORTE 3 --------------------
         elif opcion == 3:
-            try:
-                resultado = reporte_3()
-                imprimir_reporte("REPORTE 3: COBRANZA", resultado)
-            except Exception as e:
-                print("❌ Error en Reporte 3:", e)
+           try:
+                fecha_inicio = datetime(2026, 1, 1)
+                fecha_fin = datetime(2026, 12, 31)
+                resultado = reporte_3(fecha_inicio, fecha_fin)
+                mostrar_reporte_3(resultado)
+           except Exception as e:
+                print(f"Error al generar el reporte 3: {e}")
 
-
-        # -------------------- REPORTE 4 --------------------
         elif opcion == 4:
             try:
-                resultado = reporte_4()
-                imprimir_reporte("REPORTE 4: PRODUCTOS POR TIPO", resultado)
+                fecha_inicio = datetime(2026, 1, 1)
+                fecha_fin = datetime(2026, 12, 31)
+                resultado = reporte_4(fecha_inicio, fecha_fin)
+                mostrar_reporte_4(resultado)
             except Exception as e:
-                print("❌ Error en Reporte 4:", e)
-
-        # -------------------- REPORTE 5 --------------------
+                print(f"Error al generar el reporte 4: {e}")
         elif opcion == 5:
             try:
-                resultado = reporte_5()
-                imprimir_reporte("REPORTE 5: MONTO VENDIDO", resultado)
+                fecha_inicio = datetime(2026, 1, 1)
+                fecha_fin = datetime(2026, 12, 31)
+                resultado = reporte_5(fecha_inicio, fecha_fin)
+                mostrar_reporte_5(resultado)
             except Exception as e:
-                print("❌ Error en Reporte 5:", e)
-
-        # -------------------- REPORTE 6 --------------------
+                print(f"Error al generar el reporte 5: {e}")
         elif opcion == 6:
             try:
                 resultado = reporte_6()
