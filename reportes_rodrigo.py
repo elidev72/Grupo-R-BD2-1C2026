@@ -162,7 +162,7 @@ def reporte_4(fecha_desde, fecha_hasta):
     return resultado  
 
 
-def reporte_5():
+def reporte_5(limit = 10):
     collection = Venta._get_collection()
     
     pipeline = [
@@ -214,8 +214,13 @@ def reporte_5():
         
          
         {
-            "$sort": { "monto_vendido": -1 }
+            "$sort": { "monto_vendido": -1 },
+            
+        },
+        {
+            "$limit":limit
         }
+        
     ]
     
     return list(collection.aggregate(pipeline))

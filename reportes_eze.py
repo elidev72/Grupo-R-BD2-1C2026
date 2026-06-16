@@ -4,7 +4,7 @@ from models import Venta, Persona, Sucursal
 #7. Ranking compras agrupadas por cliente para el total de la cadena. (quiero ver los clientes
 #que mas compraron en toda la cadena, pudieron comprar en mas de una sucursal)
 
-def reporte_7():
+def reporte_7(limit = 10):
     """
     Ranking de clientes por cantidad total de compras en toda la cadena.
     
@@ -21,7 +21,9 @@ def reporte_7():
             }
         },
         # Ordenar descendente por cantidad
-        {"$sort": {"total_monto":-1}}
+        {"$sort": {"total_monto":-1}},
+        {"$limit":limit}
+
     ]
     
     resultados = list(Venta._get_collection().aggregate(pipeline))
@@ -57,7 +59,7 @@ def reporte_7():
 #8. Ranking compras agrupadas por cliente y por sucursal. (quiero ver como compraron los
 #clientes intra-sucursal)
 
-def reporte_8():
+def reporte_8(limit = 10):
     """
     Ranking de clientes por cantidad de compras, desglosado por sucursal.
     
@@ -82,7 +84,8 @@ def reporte_8():
             }
         },
         # Ordenar descendente por cantidad
-        {"$sort": {"total_cantidad": -1}}
+        {"$sort": {"total_cantidad": -1}},
+        {"$limit":limit}
     ]
     
     resultados = list(Venta._get_collection().aggregate(pipeline))

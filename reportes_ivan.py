@@ -162,7 +162,7 @@ def reporte_2(fecha_desde, fecha_hasta):
 #
 #6. Ranking de cantidad de productos vendidos, agrupado por producto y por sucursal.
 
-def reporte_6():
+def reporte_6(limit = 10):
     collection = Venta._get_collection()
 
     pipeline = [
@@ -215,7 +215,12 @@ def reporte_6():
             "$sort": {
                 "totalVendidos": -1
             }
+        },
+        {
+            "$limit":limit
         }
+
+
     ]
 
     return list(collection.aggregate(pipeline))
