@@ -59,7 +59,6 @@ if __name__ == "__main__":
         if opcion == 1:
             fecha_desde = leer_fecha("Fecha desde (YYYY-MM-DD): ")
             fecha_hasta = leer_fecha("Fecha hasta (YYYY-MM-DD): ")
-
             resultado = reporte_1(fecha_desde, fecha_hasta)
             imprimir_reporte("REPORTE 1: VENTAS POR CADENA Y SUCURSAL", resultado)
 
@@ -68,7 +67,6 @@ if __name__ == "__main__":
             try:
                 fecha_desde = leer_fecha("Fecha desde (YYYY-MM-DD): ")
                 fecha_hasta = leer_fecha("Fecha hasta (YYYY-MM-DD): ")
-
                 resultado = reporte_2(fecha_desde, fecha_hasta)
                 imprimir_reporte("REPORTE 2: VENTAS POR OBRA SOCIAL", resultado)
 
@@ -81,7 +79,7 @@ if __name__ == "__main__":
                 fecha_desde = leer_fecha("Fecha desde (YYYY-MM-DD): ")
                 fecha_hasta = leer_fecha("Fecha hasta (YYYY-MM-DD): ")
                 resultado = reporte_3(fecha_desde, fecha_hasta)
-                mostrar_reporte_3(resultado)
+                imprimir_reporte("REPORTE 3: COBRANZA TOTAL Y POR SUCURSAL", resultado)
            except Exception as e:
                 print(f"Error al generar el reporte 3: {e}")
 
@@ -90,13 +88,13 @@ if __name__ == "__main__":
                 fecha_desde = leer_fecha("Fecha desde (YYYY-MM-DD): ")
                 fecha_hasta = leer_fecha("Fecha hasta (YYYY-MM-DD): ")
                 resultado = reporte_4(fecha_desde, fecha_hasta)
-                mostrar_reporte_4(resultado)
+                imprimir_reporte("REPORTE 4: VENTAS POR TIPO DE PRODUCTO", resultado)
             except Exception as e:
                 print(f"Error al generar el reporte 4: {e}")
         elif opcion == 5:
             try:
                 resultado = reporte_5()
-                mostrar_reporte_5(resultado)
+                imprimir_reporte("REPORTE 5: RANKING MONTO VENDIDO POR PRODUCTO Y SUCURSAL", resultado)
             except Exception as e:
                 print(f"Error al generar el reporte 5: {e}")
         elif opcion == 6:
